@@ -1,0 +1,87 @@
+\documentclass{article}
+
+% page layout for NASA
+\usepackage[letterpaper, textwidth=6.5in, textheight=9.0in]{geometry}
+\usepackage{setspace}
+\setstretch{1.08}
+\usepackage{fancyhdr}
+\setlength{\topmargin}{0.0in}
+\setlength{\headheight}{3.0ex}\addtolength{\textheight}{-\headheight} % make room for headers
+\setlength{\headsep}{3.0ex}\addtolength{\textheight}{-\headsep}
+\pagestyle{fancy}
+%\renewcommand{\headrulewidth}{0.0pt}
+\fancyhf{}
+\fancyhead[L]{\sffamily Hogg / Improved precision and new cosmological observables for \textsl{SPHEREx}}
+\newcommand{\paragraphskip}{\smallskip}
+\renewcommand{\paragraph}[1]{\par\paragraphskip\noindent\textbf{#1}}
+\renewcommand{\subparagraph}[1]{\par\paragraphskip\noindent\textit{#1}}
+\sloppy\sloppypar\raggedbottom\frenchspacing
+
+% stuff for boxes and figures
+\usepackage[framemethod=TikZ]{mdframed}
+\newcounter{box}
+\newcommand{\boxname}{Box}
+\newcommand{\boxref}[1]{\boxname~\ref{#1}}
+\newenvironment{explainer}{\begin{figure}[t!]\begin{mdframed}[roundcorner=2pt, backgroundcolor=black!05]\refstepcounter{box}}{\end{mdframed}\end{figure}}
+
+% math macros
+\newcommand{\unit}[1]{\mathrm{#1}}
+\newcommand{\arcsec}{\unit{arcsec}}
+
+\begin{document}
+
+\paragraph{Project summary:}
+The new \textsl{SPHEREx} Mission is making measurements of a kind that astrophysicists we have not had previously.
+The spacecraft delivers a low-resolution visible-to-infrared spectrum of every position on the celestial sphere, with $6\,\arcsec$ pixels.
+It produces this remarkable data set with no moving parts, making use of multiple detectors, all with ramped, narrowband filters.
+The observing strategy is a calibrator's dream, as it moves, over time, every source on the sky onto every point in the detector space multiple times throughout a two-year mission, (impressively) making the data public as it goes.
+
+Here we propose to do four-ish things with the \textsl{SPHEREx} data:
+
+\paragraph{Reformat the data} into a publicly available, high-performance, column-oriented data format with an interface that permits very fast queries as a function of time, wavelength, detector position, or position on the celestial sphere.
+
+\paragraph{Separate components} of the measured intensities using a geometry-informed causal separation technique.
+This will improve the separation of the measured intensity field into contributions at the spacecraft, contributions from Zodiacal light, and contributions from outside the Solar System.
+
+\paragraph{Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
+
+\paragraph{Interpret these observables} in terms of both traditional astrophysical signals and new physics signals from dark-matter--photon interactions.
+This will create novel measurements of total (clustered) cosmic stellar mass and star-formation rate
+It will also put sensitive and novel limits on new physics in the dark sector, in the form of dark-matter--photon interactions, which could come from scattering or interactions with light degrees of freedom.
+
+\paragraphskip
+These four project components will lead to deliverables in the form of open-source code, publicly available data interfaces, contributions to scientific meetings, and refereed scientific papers.
+
+\clearpage
+\section{New cosmological observables}
+If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} on page~\pageref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
+\begin{explainer}
+    \paragraph{\boxname~\thebox\ --- A note on specific intensity:
+    \label{box:intensity}}
+\end{explainer}
+
+\section{Reformatting the \textsl{SPHEREx} data}
+
+\section{Causal separation of components}
+
+\section{The galaxy--photon cross-correlation function}
+\begin{explainer}
+    \paragraph{\boxname~\thebox\ --- A note on the marked cross-correlation function:}
+\end{explainer}
+
+\section{New cosmological measurements}
+
+\section{New searches for new physics}
+\begin{explainer}
+    \paragraph{\boxname~\thebox\ --- A note on light degrees of freedom in the dark sector:}
+\end{explainer}
+
+\section{Management and timeline}
+
+\section{Prior NASA support}
+
+\section{Student mentoring plan}
+
+\section{Data management plan}
+
+\end{document}

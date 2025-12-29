@@ -1,6 +1,6 @@
 \documentclass{article}
 
-% page layout for NASA
+% page layout and typography for NASA
 \usepackage[letterpaper, textwidth=6.5in, textheight=9.0in]{geometry}
 \usepackage{setspace}
 \setstretch{1.08}
@@ -12,7 +12,7 @@
 %\renewcommand{\headrulewidth}{0.0pt}
 \fancyhf{}
 \fancyhead[L]{\sffamily Hogg / Improved precision and new cosmological observables for \textsl{SPHEREx}}
-\newcommand{\paragraphskip}{\smallskip}
+\newcommand{\paragraphskip}{\medskip}
 \renewcommand{\paragraph}[1]{\par\paragraphskip\noindent\textbf{#1}}
 \renewcommand{\subparagraph}[1]{\par\paragraphskip\noindent\textit{#1}}
 \sloppy\sloppypar\raggedbottom\frenchspacing
@@ -22,9 +22,11 @@
 \newcounter{box}
 \newcommand{\boxname}{Box}
 \newcommand{\boxref}[1]{\boxname~\ref{#1}}
-\newenvironment{explainer}{\begin{figure}[t!]\begin{mdframed}[roundcorner=2pt, backgroundcolor=black!05]\refstepcounter{box}}{\end{mdframed}\end{figure}}
+\newenvironment{explainer}[1][something random]{\begin{figure}[b!]\begin{mdframed}[roundcorner=2pt, backgroundcolor=black!05]\refstepcounter{box}\paragraph{\boxname~\thebox\ --- {#1}:}}{\end{mdframed}\end{figure}}
 
 % math macros
+\usepackage{amsmath}
+\newcommand{\dd}{\mathrm{d}}
 \newcommand{\unit}[1]{\mathrm{#1}}
 \newcommand{\arcsec}{\unit{arcsec}}
 
@@ -44,6 +46,7 @@ Here we propose to do four-ish things with the \textsl{SPHEREx} data:
 This will improve the separation of the measured intensity field into contributions at the spacecraft, contributions from Zodiacal light, and contributions from outside the Solar System.
 
 \paragraph{Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
+They deliver mean intensity fields in the physical vicinities of the galaxies, in the galaxy rest frames, as a function of proper (or any other kind of) radius.
 
 \paragraph{Interpret these observables} in terms of both traditional astrophysical signals and new physics signals from dark-matter--photon interactions.
 This will create novel measurements of total (clustered) cosmic stellar mass and star-formation rate
@@ -55,9 +58,20 @@ These four project components will lead to deliverables in the form of open-sour
 \clearpage
 \section{New cosmological observables}
 If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} on page~\pageref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
-\begin{explainer}
-    \paragraph{\boxname~\thebox\ --- A note on specific intensity:
-    \label{box:intensity}}
+\begin{explainer}[A note on specific intensity]
+    HOGG START HERE WITH NOTATION. And then:
+    In particular,
+    $$ I_\nu = \frac{\dd E}{\dd A\,\dd t\,\dd\Omega\,\dd\nu} ~, $$
+    where $E$ is energy, $A$ is area, $t$ is time, $\Omega$ is solid angle, and $\nu$ is frequency.
+    The unitarity of electromagnetism (and transparent optics) is such that the area can be of a pixel on the detector in the focal plane, and the solid angle can be delivered by the telescope f-ratio, or the area can be the area of the telescope aperture and the solid angle can be that subtended by the source.
+    How is this related to unitarity?
+    Unitary evolution of the electromagnetic field conserves the phase-space density of photons.
+    The specific intensity $I_\nu$ is very simply related to this phase space density by
+    $$ \frac{\dd N}{\dd^3\vec{x}\,\dd^3\vec{p}} = \frac{c^2}{h^4\,\nu^3}\,I_\nu ~, $$
+    where $N$ is photon number $\vec{x}$ is position, $\vec{p}$ is velocity, $c$ is the speed of light, and $h$ is Planck's constant.
+    Thus the laws of electromagnetism (plus a transparent medium) conserve intensity for the same reason that Lagrangian dynamics conserve the phase-space density of particles.
+    Redshift very slightly complicates this picture, but we will explain that in the main text.
+    \label{box:intensity}
 \end{explainer}
 
 \section{Reformatting the \textsl{SPHEREx} data}
@@ -65,15 +79,15 @@ If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{
 \section{Causal separation of components}
 
 \section{The galaxy--photon cross-correlation function}
-\begin{explainer}
-    \paragraph{\boxname~\thebox\ --- A note on the marked cross-correlation function:}
+\begin{explainer}[A note on the marked cross-correlation function]
+    foo and bar.
 \end{explainer}
 
 \section{New cosmological measurements}
 
 \section{New searches for new physics}
-\begin{explainer}
-    \paragraph{\boxname~\thebox\ --- A note on light degrees of freedom in the dark sector:}
+\begin{explainer}[A note on light degrees of freedom in the dark sector]
+    foo and bar.
 \end{explainer}
 
 \section{Management and timeline}

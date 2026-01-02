@@ -12,6 +12,8 @@
 %\renewcommand{\headrulewidth}{0.0pt}
 \fancyhf{}
 \fancyhead[L]{\sffamily Hogg / Improved precision and new cosmological observables for \textsl{SPHEREx}}
+\newcommand{\sectionname}{Section}
+\newcommand{\secref}[1]{\sectionname~\ref{#1}}
 \newcommand{\paragraphskip}{\medskip}
 \renewcommand{\paragraph}[1]{\par\paragraphskip\noindent\textbf{#1}}
 \renewcommand{\subparagraph}[1]{\par\paragraphskip\noindent\textit{#1}}
@@ -28,7 +30,11 @@
 \usepackage{amsmath}
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\unit}[1]{\mathrm{#1}}
+\newcommand{\Mega}{\unit{M}}
 \newcommand{\arcsec}{\unit{arcsec}}
+\newcommand{\Jy}{\unit{Jy}}
+\newcommand{\sr}{\unit{sr}}
+\newcommand{\MJypsr}{\Mega\Jy\,\sr^{-1}}
 
 \begin{document}
 
@@ -57,28 +63,65 @@ These four project components will lead to deliverables in the form of open-sour
 
 \clearpage
 \section{New cosmological observables}
-If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} on page~\pageref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
+If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
+The \textsl{SPHEREx} data can be used to make new catalogs of galaxies and quasars, to permit traditional kinds of large-scale-structure measurements, but on an unprecedented sky area.
+The data can can also be left in intensity form, to perform new kinds of large-scale-structure measurements that don't rely on object detection, segmentation of the data into catalogs, or the discard of low-intensity pixels.
+
+Here we are going to do something novel---something hybrid---that uses every (unmasked; see below) pixel of the \textsl{SPHEREx} data in combination with external or \textsl{SPHEREx}-generated galaxy catalogs to perform galaxy--intensity or galaxy--photon cross-correlation functions.
+It turns out that it is possible to make these functions at rest-frame wavelengths and in proper (or comoving) radius units, such that they can be interpreted in terms of either traditional cosmological density fields, or used for searches for new physics.
+In what follows, we will propose to do all of these things, along with all the steps needed to go from the raw \textsl{SPHEREx} data to the measurements and interpretations.
 \begin{explainer}[A note on specific intensity]
-    HOGG START HERE WITH NOTATION. And then:
-    In particular,
-    $$ I_\nu = \frac{\dd E}{\dd A\,\dd t\,\dd\Omega\,\dd\nu} ~, $$
-    where $E$ is energy, $A$ is area, $t$ is time, $\Omega$ is solid angle, and $\nu$ is frequency.
-    The unitarity of electromagnetism (and transparent optics) is such that the area can be of a pixel on the detector in the focal plane, and the solid angle can be delivered by the telescope f-ratio, or the area can be the area of the telescope aperture and the solid angle can be that subtended by the source.
+    There are many names for the electromagnetic signals we get from the sky.
+    Sources have fluxes, surfaces have brightnesses or brightness temperatures, and the electromagnetic radiation has an intensity.
+    In what follows, what the \textsl{SPHEREx} Team delivers in its data releases, and calls ``flux surface brightness,'' we will call ``\emph{specific intensity} $I_\nu$,'' where the subscript $\nu$ says that it is intensity per unit frequency (that's the ``specific'' part).
+    It is measured in units of $\MJypsr$ (or many other units, but we will use these, to match \textsl{SPHEREx}).
+    The specific intensity is energy $E$ per area $A$ per time $t$ per solid angle $\Omega$ per frequency $\nu$ or 
+    $$ I_\nu = \frac{\dd E}{\dd A\,\dd t\,\dd\Omega\,\dd\nu} ~. $$
+    The unitarity of electromagnetism (and transparent optics) is such that the area can be of a pixel on the detector in the focal plane, and the solid angle can be delivered by the telescope f-ratio, or the area can be the area of the telescope aperture and the solid angle can be that subtended by the pixel on the celestial sphere; the specific intensity will be the same in both cases.
     How is this related to unitarity?
-    Unitary evolution of the electromagnetic field conserves the phase-space density of photons.
+    Unitary evolution of the electromagnetic field conserves the phase-space density of photons as they travel through the telescope optics.
     The specific intensity $I_\nu$ is very simply related to this phase space density by
     $$ \frac{\dd N}{\dd^3\vec{x}\,\dd^3\vec{p}} = \frac{c^2}{h^4\,\nu^3}\,I_\nu ~, $$
     where $N$ is photon number $\vec{x}$ is position, $\vec{p}$ is velocity, $c$ is the speed of light, and $h$ is Planck's constant.
     Thus the laws of electromagnetism (plus a transparent medium) conserve intensity for the same reason that Lagrangian dynamics conserve the phase-space density of particles.
-    Redshift very slightly complicates this picture, but we will explain that in the main text.
+    Redshift very slightly complicates the use of this conservation, but we will explain that in the main text.
     \label{box:intensity}
 \end{explainer}
 
-\section{Reformatting the \textsl{SPHEREx} data}
+HOGG: WHat has been done in the past and how is this all novel?
 
-\section{Causal separation of components}
+\section{Reformatting the \textsl{SPHEREx} data}\label{sec:db}
+Over its mission lifetime, and treating each telemetered pixel of intensity data as a measurement, \textsl{SPHEREx} will deliver on the order $10^{13}$ measurements, plus associated housekeeping data.
+For both the causal-separation part of this proposal (\secref{sec:causal}) and the galaxy--photon cross-correlation function part of this proposal (\secref{sec:ccf}), we will need to perform large numbers of complex queries on these measurements.
+These involve things like slicing them by bandpass central wavelength, position on the sky, time, or spacecraft orbital phase.
+None of these queries are fast in the native formats in which the data are delivered to the community in the official weekly \textsl{SPHEREx} data releases of calibrated data.
 
-\section{The galaxy--photon cross-correlation function}
+Don't get us wrong: We are extremely grateful to---and impressed by---the continuous data release of all scientifically valuable data, in calibrated and ready-to-use form, without proprietary period.
+The Mission is one of the most generous in NASA history (and it is an impressive history).
+However, the fact that each imaging camera is behind a ramp filter makes the standard image formats not very useful for large-scale, fast queries, especially queries sliced by wavelength.
+
+For this reason, we are proposing, as a key project and deliverable of this project, to reformat the data into a column-oriented data format, and provide a structured query language (SQL) interface that permits large, fast queries.
+We will build these components with ourselves in mind as the key customers.
+However, the tasks we are performing are generic enough (and generalizable enough) that any database that meets our needs will meet the needs of many other customers in the \textsl{SPHEREx} user community.
+Thus we will expose our reformatting of the data and SQL interface to the community, along with documentation, for community use.
+
+HOGG get specific here.
+
+\section{Causal separation of components}\label{sec:causal}
+The \textsl{SPHEREx} cameras measure specific intensity (see \boxref{box:intensity}).
+The measurements are made through narrow-band filters that vary with location in the focal plane, and hence vary with location on the celestial sphere at each specific spacecraft pointing.
+There are many source contributions to the intensity field that is being measured: galaxies, quasars, stars, interstellar medium, Zodiacal light, scattered light, and glow from the Earth's residual atmosphere.
+It is critical for many projects that we be able to separate these sources of intensity or else model multiple sources simultaneously.
+
+Of these contributions to the intensity, a few---namely the Zodiacal light, scattered light, and glow from the Earth's residual atmosphere---can be separated out using causal techniques.
+The reason is that these intensity sources are not fixed on the Celestial sphere, but depend in addition on the position, velocity, and pointing of the spacecraft with respect to the Earth, Moon, Sun, and Jupiter (and possibly other Solar System objects).
+That is, these ``proximal'' contributions to intensity are time-dependent, in particular simple ways.
+The intensity fields that make up the core science goals of this proposal are not time-variable (or not on human time-scales).
+Some stars and quasars are also time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
+
+
+
+\section{The galaxy--photon cross-correlation function}\label{sec:ccf}
 \begin{explainer}[A note on the marked cross-correlation function]
     foo and bar.
 \end{explainer}

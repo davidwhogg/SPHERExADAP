@@ -1,3 +1,9 @@
+% to-do
+% -----
+% - make up work-package names and work with those throughout.
+% - write it.
+% - get SPO approval and submit it.
+
 \documentclass{article}
 
 % page layout and typography for NASA
@@ -11,7 +17,9 @@
 \pagestyle{fancy}
 %\renewcommand{\headrulewidth}{0.0pt}
 \fancyhf{}
-\fancyhead[L]{\sffamily Hogg / Improved precision and new cosmological observables for \textsl{SPHEREx}}
+\fancyhead[L]{\sffamily Improved precision and new cosmological observables for \textsl{SPHEREx}}
+\usepackage{enumitem}
+\setlist{topsep=1.0ex, itemsep=1.0ex, partopsep=0.0ex, parsep=0.0ex}
 \newcommand{\sectionname}{Section}
 \newcommand{\secref}[1]{\sectionname~\ref{#1}}
 \newcommand{\paragraphskip}{\medskip}
@@ -44,17 +52,17 @@ The spacecraft delivers a low-resolution visible-to-infrared spectrum of every p
 It produces this remarkable data set with no moving parts, making use of multiple detectors, all with ramped, narrowband filters.
 The observing strategy is a calibrator's dream, as it moves, over time, every source on the sky onto every point in the detector space multiple times throughout a two-year mission, (impressively) making the data public as it goes.
 
-Here we propose to do four-ish things with the \textsl{SPHEREx} data:
+Here we propose to execute five work packages (WPs) with the \textsl{SPHEREx} data:
 
-\paragraph{Reformat the data} into a publicly available, high-performance, column-oriented data format with an interface that permits very fast queries as a function of time, wavelength, detector position, or position on the celestial sphere.
+\paragraph{WP1: Reformat the data} into a publicly available, high-performance, column-oriented data format with an interface that permits very fast queries as a function of time, wavelength, detector position, or position on the celestial sphere.
 
-\paragraph{Separate components} of the measured intensities using a geometry-informed causal separation technique.
+\paragraph{WP2: Separate components} of the measured intensities using a geometry-informed causal separation technique.
 This will improve the separation of the measured intensity field into contributions at the spacecraft, contributions from Zodiacal light, and contributions from outside the Solar System.
 
-\paragraph{Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
+\paragraph{WP3: Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
 They deliver mean intensity fields in the physical vicinities of the galaxies, in the galaxy rest frames, as a function of proper (or any other kind of) radius.
 
-\paragraph{Interpret these observables} in terms of both traditional astrophysical signals and new physics signals from dark-matter--photon interactions.
+\paragraph{WP4, WP5: Interpret these observables} in terms of both traditional astrophysical signals (WP4) and new physics signals (WP5) from dark-matter--photon interactions.
 This will create novel measurements of total (clustered) cosmic stellar mass and star-formation rate
 It will also put sensitive and novel limits on new physics in the dark sector, in the form of dark-matter--photon interactions, which could come from scattering or interactions with light degrees of freedom.
 
@@ -62,14 +70,10 @@ It will also put sensitive and novel limits on new physics in the dark sector, i
 These four project components will lead to deliverables in the form of open-source code, publicly available data interfaces, contributions to scientific meetings, and refereed scientific papers.
 
 \clearpage
-\section{New cosmological observables}
+\section*{New cosmological observables}
 If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
 The \textsl{SPHEREx} data can be used to make new catalogs of galaxies and quasars, to permit traditional kinds of large-scale-structure measurements, but on an unprecedented sky area.
 The data can can also be left in intensity form, to perform new kinds of large-scale-structure measurements that don't rely on object detection, segmentation of the data into catalogs, or the discard of low-intensity pixels.
-
-Here we are going to do something novel---something hybrid---that uses every (unmasked; see below) pixel of the \textsl{SPHEREx} data in combination with external or \textsl{SPHEREx}-generated galaxy catalogs to perform galaxy--intensity or galaxy--photon cross-correlation functions.
-It turns out that it is possible to make these functions at rest-frame wavelengths and in proper (or comoving) radius units, such that they can be interpreted in terms of either traditional cosmological density fields, or used for searches for new physics.
-In what follows, we will propose to do all of these things, along with all the steps needed to go from the raw \textsl{SPHEREx} data to the measurements and interpretations.
 \begin{explainer}[A note on specific intensity]
     There are many names for the electromagnetic signals we get from the sky.
     Sources have fluxes, surfaces have brightnesses or brightness temperatures, and the electromagnetic radiation has an intensity.
@@ -88,9 +92,50 @@ In what follows, we will propose to do all of these things, along with all the s
     \label{box:intensity}
 \end{explainer}
 
-HOGG: WHat has been done in the past and how is this all novel?
+Here we are going to do something novel---something hybrid---that uses every (unmasked; see below) pixel of the \textsl{SPHEREx} data in combination with external or \textsl{SPHEREx}-generated galaxy catalogs to perform galaxy--intensity or galaxy--photon cross-correlation functions.
+It turns out that it is possible to make these functions at rest-frame wavelengths and in proper (or comoving) radius units, such that they can be interpreted in terms of either traditional cosmological density fields, or used for searches for new physics.
+In what follows, we will propose to do all of these things, along with all the steps needed to go from the raw \textsl{SPHEREx} data to the measurements and interpretations.
 
-\section{Reformatting the \textsl{SPHEREx} data}\label{sec:db}
+As a reminder (but there will be more in \boxref{box:ccf}), the standard auto-correlation function at separation $r$ is the excesss probability of finding a galaxy at a separation $r$ from another galaxy.
+The cross-correlation function between population A and population B is the excess probability of finding a population-B galaxy at a separation $r$ from a population-A galaxy.
+The galaxy--photon cross-correlation functions we will build in this proposal, which will be functions of both separation $r$ and (photon) wavelength $\lambda$, represent the excess probability of receiving a photon of rest-wavelength $\lambda$ from a spatial location that is a distance $r$ from a galaxy.
+When seen as functions of separation, these are like traditional cross-correlation functions.
+When seen as functions of rest wavelength, these are like average spectra, which can be delivered in specific-intensity or photon phase-space density units (see \boxref{box:intensity}).
+
+\paragraph{Prior work:}
+We are not the first to think about galaxy--photon cross-correlations, but we are the first to think about them in (proper or comoving) distance space (as opposed to angular space), and we are the first (we believe) to think about them in terms of astrophysically interpretable mean spectra.
+\begin{itemize}
+    \item Something about doing this in c-ell space.
+    \item Something about dust correlations by Fukugita and Bovy.
+    \item Something about marked correlation functions and their applications in this area.
+\end{itemize}
+
+\paragraph{Our contributions:}
+This proposal is to learn, do, publish, and release a set of novel things:
+\begin{itemize}
+    \item In Work Package 1 (WP1), we will repackage the \textsl{SPHEREx} data into a high-performance, column-oriented format, and provide an interface for making fast queries of the data, no matter whether those queries are in terms of sky position, wavelength bandpass, focal-plane position, or spacecraft position and velocity vectors, or combinations of those.
+    We will produce this interface, and use it in WP2 and WP3.
+    We will also document it and expose it to the world, to amplify and improve the \textsl{SPHEREx} public data releases.
+    \item In Work Package 2 (WP2), we will improve the \textsl{SPHEREx} component separation using geometric principles and a machine-learning approach that has good causal structure.
+    This will deliver separated local-spacecraft (scattered light and residual atmospheric effects), Solar-system (Zodiacal light), and distant (Galactic and extragalactic) components to the specific intensity in each \textsl{SPHEREx} pixel measurement.
+    We will publish these components in the same interface as that produced in WP1, and in refereed publications.
+    \item In Work Package 3 (WP3), we will measure the galaxy--photon cross-correlation function, as a function of proper and comoving separation and also rest wavelength.
+    These measurements will make use of the component-separated \textsl{SPHEREx} specific intensity measurements delivered in WP2, and several large-solid-angle publicly available spectroscopic galaxy catalogs.
+    We will deliver these results, along with methods and code, in refereed publications and in a public data release.
+    \item In Work Package 4 (WP4), we will interpret the galaxy--photon cross-correlation function in terms of cosmological density fields.
+    In particular, beacause the cross-correlation can be interpreted as a kind of ``average spectrum,'' it can be interpreted as measuring the mean projected 2-dimensional stellar mass density as a function of transverse separation.
+    This, in turn, provided the number density of the galaxy tracers, can be interpreted in terms of the total mean (clustered) stellar mass density.
+    In conventional cosmological models, this is very close to the total stellar mass density.
+    Similarly, we will interpret the galaxy--photon cross-correlation function in terms of star-formation-rate density.
+    We will publish these results in a refereed paper.
+    \item Finally, and more speculatively, in Work Package 5 (WP5), we will interpret the galaxy--photon cross-correlation function in terms of new physics, in which there are dark-matter--photon interactions.
+    These could be from light (low-energy) transitions, dark-photon--photon mixing, or axion--photon interactions.
+    Some of these will make narrow-line signals, some broad-band, and some would be proportional to the square of the dark-matter density and some to the dark-matter density; interpretation here requires assuming that the dark-matter density follows something close to the form expected from the predictions of the standard cold-dark-matter model \cite{lcdm}.
+    We will publish these results in a refereed paper, and much more if (as is unlikely) we find something.
+\end{itemize}
+We now speak to each of these work packages in turn.
+
+\section*{WP1: Reformatting the \textsl{SPHEREx} data}\label{sec:db}
 Over its mission lifetime, and treating each telemetered pixel of intensity data as a measurement, \textsl{SPHEREx} will deliver on the order $10^{13}$ measurements, plus associated housekeeping data.
 For both the causal-separation part of this proposal (\secref{sec:causal}) and the galaxy--photon cross-correlation function part of this proposal (\secref{sec:ccf}), we will need to perform large numbers of complex queries on these measurements.
 These involve things like slicing them by bandpass central wavelength, position on the sky, time, or spacecraft orbital phase.
@@ -107,7 +152,7 @@ Thus we will expose our reformatting of the data and SQL interface to the commun
 
 HOGG get specific here.
 
-\section{Causal separation of components}\label{sec:causal}
+\section*{WP2: Causal separation of components}\label{sec:causal}
 The \textsl{SPHEREx} cameras measure specific intensity (see \boxref{box:intensity}).
 The measurements are made through narrow-band filters that vary with location in the focal plane, and hence vary with location on the celestial sphere at each specific spacecraft pointing.
 There are many source contributions to the intensity field that is being measured: galaxies, quasars, stars, interstellar medium, Zodiacal light, scattered light, and glow from the Earth's residual atmosphere.
@@ -119,26 +164,24 @@ That is, these ``proximal'' contributions to intensity are time-dependent, in pa
 The intensity fields that make up the core science goals of this proposal are not time-variable (or not on human time-scales).
 Some stars and quasars are also time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
 
-
-
-\section{The galaxy--photon cross-correlation function}\label{sec:ccf}
-\begin{explainer}[A note on the marked cross-correlation function]
+\section*{WP3: The galaxy--photon cross-correlation function}\label{sec:ccf}
+\begin{explainer}[A note on the marked cross-correlation function]\label{box:ccf}
     foo and bar.
 \end{explainer}
 
-\section{New cosmological measurements}
+\section*{WP4: New measurements of cosmic densities}
 
-\section{New searches for new physics}
+\section*{WP5: New searches for new physics}
 \begin{explainer}[A note on light degrees of freedom in the dark sector]
     foo and bar.
 \end{explainer}
 
-\section{Management and timeline}
+\section*{Management and timeline}
 
-\section{Prior NASA support}
+\section*{Prior NASA support}
 
-\section{Student mentoring plan}
+\section*{Student mentoring plan}
 
-\section{Data management plan}
+\section*{Data management plan}
 
 \end{document}

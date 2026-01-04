@@ -104,10 +104,12 @@ When seen as functions of rest wavelength, these are like average spectra, which
 
 \paragraph{Prior work:}
 We are not the first to think about galaxy--photon cross-correlations, but we are the first to think about them in (proper or comoving) distance space (as opposed to angular space), and we are the first (we believe) to think about them in terms of astrophysically interpretable mean spectra.
+
+CONNOR CAN you put in a summary of the prior research here.
 \begin{itemize}
-    \item Something about doing this in c-ell space.
-    \item Something about dust correlations by Fukugita and Bovy.
-    \item Something about marked correlation functions and their applications in this area.
+    \item Something about doing this in c-ell space; why angular doesn't work for our goals.
+    \item Something about dust correlations by Fukugita and Bovy. And how were they interpreted?
+    \item Something about marked correlation functions and their applications in this area. We will also have a box / explainer below (\boxref{box:ccf}).
 \end{itemize}
 
 \paragraph{Our contributions:}
@@ -152,17 +154,65 @@ Thus we will expose our reformatting of the data and SQL interface to the commun
 
 HOGG get specific here.
 
+CONNOR: Can you list the advantages of the column-oriented format and our choices here?
+
 \section*{WP2: Causal separation of components}\label{sec:causal}
 The \textsl{SPHEREx} cameras measure specific intensity (see \boxref{box:intensity}).
 The measurements are made through narrow-band filters that vary with location in the focal plane, and hence vary with location on the celestial sphere at each specific spacecraft pointing.
-There are many source contributions to the intensity field that is being measured: galaxies, quasars, stars, interstellar medium, Zodiacal light, scattered light, and glow from the Earth's residual atmosphere.
+There are many source contributions to the intensity field that is being measured: galaxies, quasars, stars, interstellar medium, Zodiacal light (Zodi), scattered light, and glow from the Earth's residual atmosphere.
 It is critical for many projects that we be able to separate these sources of intensity or else model multiple sources simultaneously.
 
 Of these contributions to the intensity, a few---namely the Zodiacal light, scattered light, and glow from the Earth's residual atmosphere---can be separated out using causal techniques.
 The reason is that these intensity sources are not fixed on the Celestial sphere, but depend in addition on the position, velocity, and pointing of the spacecraft with respect to the Earth, Moon, Sun, and Jupiter (and possibly other Solar System objects).
 That is, these ``proximal'' contributions to intensity are time-dependent, in particular simple ways.
 The intensity fields that make up the core science goals of this proposal are not time-variable (or not on human time-scales).
-Some stars and quasars are also time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
+Some stars and quasars are time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
+
+Because the ``local'' contributions to the intensity (local to the spacecraft or local to the Solar System) have functional dependences on spacecraft position and velocity vectors (and the same for the relevant Solar System bodies), while the non-local contributions (those effectively fixed on the celestial sphere) do not, it is possible to perform a component separation in much the way that we perform self-calibrations of hardware \cite{selfcalibration}:
+We provide very flexible (highly parameterized or non-parametric) models for the local contributions that respects the geometric or time-dependent expectations of those fields, and simultaneously fit those models plus the intensity fixed on the celestial sphere.
+This will result in a component separation, and a celestial map that is cleaned of all local contributions.
+
+In detail, we propose to build the local component model out of the following additive components.
+Each of them depends on a set of vectors (positions and velocities and pointing directions).
+That will be important for what follows.
+\begin{description}
+    \item[scattered light]
+    The spacecraft focal plane receives some scattered light from Solar System objects, but primarily the Moon.
+    This scattered light is subtracted out by the \textsl{SPHEREx} pipelines, so the model we are building here is to model the residual scattered light unmodeled or modeled incorrectly by the pipeline.
+    The scattered light depends primarily on the relative position of the spacecraft and the Moon, the positions of these relative to the Sun, and the spacecraft pointing direction within that spacecraft--Moon--Sun triangle.
+    Because this depends on spacecraft details, it also depends on the roll angle of the spacecraft around its pointing direction.
+    \item[atmospheric glow]
+    HOGG: IS THIS A THING?
+    \item[symmetric Zodi]
+    The Zodi is a disk of reflecting (in the visible) and emitting (in the infrared) Solar System dust component.
+    To first order, it is a disk centered on the Solar System barycenter and aligned with (normal to) the Solar System angular-momentum pseudo-vector.
+    Thus the intensity received in the \textsl{SPHEREx} focal plane from this first-order component depends only on the barycentric position of the spacecraft, and the pointing of the spacecraft with respect to that vector and the angular-momentum pseudo-vector direction.
+    Because the angular momentum is a pseudo-vector (it depends on the right-hand rule), the dependence on this vector must be even (symmetric with respect to reflections of this direction).
+    \item[Earth-trailing Zodi]
+    There is a second-order component of the Zodi that is locked to the Earth.
+    It is not a big component, but it is important to \textsl{SPHEREx} because the spacecraft is very close to the Earth.
+    This component depends on the relative positions of the Earth and spacecraft, the Earth velocity direction, and the pointing direction of the spacecraft with respect to these these vectors.
+    \item[Jupiter-locked Zodi]
+    It's not fully known what features in the Zodi are locked to other planets, and how important they are.
+    We believe that Jupiter matters,
+    So there will be a component like the Earth-trailing component, but which makes use of Jupiter's position instead of the Earth's.
+\end{description}
+There could be additional components; if we find that we need them, we will add them.
+
+There is work in machine learning that shows that it is both possible and effective to learn flexible models with geometric structure of these types using \emph{invariant scalars} \cite{scalars}.
+These scalars are (effectively) dot products of the vectors that are in play.
+Models based on invariant scalars, by construction, are coordinate free---that is, they obey the O(3) (rotation and reflection) and translation symmetries that are obeyed by essentially all of classical physics.
+We plan to take this approach, and have some prototype code that appears to work well on artificial data.
+The invariant-scalars approach is a feature-engineering move; it does not specify architecture and all machine-learning architectures are permitted.
+We will build models with polynomial (yes, we believe this might work) and multi-layer perceptron structures, and use cross-validation to make choices.
+
+Importantly, in this approach, we are not building a \emph{physical model} of the scattered light, glow, or Zodiacal light.
+These will be \emph{effective models}, designed to make good predictions in the space of the data (which are solely intensities measured in \textsl{SPHEREx} pixels).
+It is possible that the models we build will be interpretable, after the fact, in terms of the physics of the Zodi or the Earth's outer atmosphere.
+However, such interpretation is out of scope for this proposal.
+Our job here is to clean the \textsl{SPHEREx} data for use in the cosmological projects (WP3, WP4, WP5).
+
+The deliverables from WP2 will be a scientific paper in the refereed literature, open-source code, and local-model columns in the column-oriented, SQL-interfaced, public-facing database delivered in WP1.
 
 \section*{WP3: The galaxy--photon cross-correlation function}\label{sec:ccf}
 \begin{explainer}[A note on the marked cross-correlation function]\label{box:ccf}

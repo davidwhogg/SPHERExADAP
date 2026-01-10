@@ -4,7 +4,7 @@
 % - write it.
 % - get SPO approval and submit it.
 
-\documentclass{article}
+\documentclass[12pt]{article}
 
 % page layout and typography for NASA
 \usepackage[letterpaper, textwidth=6.5in, textheight=9.0in]{geometry}
@@ -44,10 +44,24 @@
 \newcommand{\sr}{\unit{sr}}
 \newcommand{\MJypsr}{\Mega\Jy\,\sr^{-1}}
 
+% comments
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\newcommand{\CH}[1]{{\color{blue!70!black} /CH says: #1/}}
+
+% bibliography
+\usepackage{natbib}
+\bibliographystyle{aasjournal}
+
+% blackboard bold numbers
+\usepackage{bbm}
+
+
 \begin{document}
 
 \paragraph{Project summary:}
-The new \textsl{SPHEREx} Mission is making measurements of a kind that astrophysicists we have not had previously.
+The new \textsl{SPHEREx} Mission is making measurements of a kind that astrophysicists have not had previously.
 The spacecraft delivers a low-resolution visible-to-infrared spectrum of every position on the celestial sphere, with $6\,\arcsec$ pixels.
 It produces this remarkable data set with no moving parts, making use of multiple detectors, all with ramped, narrowband filters.
 The observing strategy is a calibrator's dream, as it moves, over time, every source on the sky onto every point in the detector space multiple times throughout a two-year mission, (impressively) making the data public as it goes.
@@ -73,11 +87,12 @@ These four project components will lead to deliverables in the form of open-sour
 \section*{New cosmological observables}
 If you have many measurements of \emph{specific intensity} $I_\nu$ (see \boxref{box:intensity} for the definition), untargeted, all over the celestial sphere, and many observations of \emph{galaxies} with measured angular positions on the sphere and measured redshifts, many new cosmological observables become accessible.
 The \textsl{SPHEREx} data can be used to make new catalogs of galaxies and quasars, to permit traditional kinds of large-scale-structure measurements, but on an unprecedented sky area.
-The data can can also be left in intensity form, to perform new kinds of large-scale-structure measurements that don't rely on object detection, segmentation of the data into catalogs, or the discard of low-intensity pixels.
+The data can also be left in intensity form to perform new kinds of large-scale-structure measurements that don't rely on object detection, segmentation of the data into catalogs, or the discarding of low-intensity pixels.
 \begin{explainer}[A note on specific intensity]
     There are many names for the electromagnetic signals we get from the sky.
     Sources have fluxes, surfaces have brightnesses or brightness temperatures, and the electromagnetic radiation has an intensity.
     In what follows, what the \textsl{SPHEREx} Team delivers in its data releases, and calls ``flux surface brightness,'' we will call ``\emph{specific intensity} $I_\nu$,'' where the subscript $\nu$ says that it is intensity per unit frequency (that's the ``specific'' part).
+    \CH{cite rybicki \& lightman for authority on naming?}
     It is measured in units of $\MJypsr$ (or many other units, but we will use these, to match \textsl{SPHEREx}).
     The specific intensity is energy $E$ per area $A$ per time $t$ per solid angle $\Omega$ per frequency $\nu$ or 
     $$ I_\nu = \frac{\dd E}{\dd A\,\dd t\,\dd\Omega\,\dd\nu} ~. $$
@@ -86,7 +101,7 @@ The data can can also be left in intensity form, to perform new kinds of large-s
     Unitary evolution of the electromagnetic field conserves the phase-space density of photons as they travel through the telescope optics.
     The specific intensity $I_\nu$ is very simply related to this phase space density by
     $$ \frac{\dd N}{\dd^3\vec{x}\,\dd^3\vec{p}} = \frac{c^2}{h^4\,\nu^3}\,I_\nu ~, $$
-    where $N$ is photon number $\vec{x}$ is position, $\vec{p}$ is velocity, $c$ is the speed of light, and $h$ is Planck's constant.
+    where $N$ is photon number, $\vec{x}$ is position, $\vec{p}$ is velocity, $c$ is the speed of light, and $h$ is Planck's constant.
     Thus the laws of electromagnetism (plus a transparent medium) conserve intensity for the same reason that Lagrangian dynamics conserve the phase-space density of particles.
     Redshift very slightly complicates the use of this conservation, but we will explain that in the main text.
     \label{box:intensity}
@@ -99,6 +114,7 @@ In what follows, we will propose to do all of these things, along with all the s
 As a reminder (but there will be more in \boxref{box:ccf}), the standard auto-correlation function at separation $r$ is the excesss probability of finding a galaxy at a separation $r$ from another galaxy.
 The cross-correlation function between population A and population B is the excess probability of finding a population-B galaxy at a separation $r$ from a population-A galaxy.
 The galaxy--photon cross-correlation functions we will build in this proposal, which will be functions of both separation $r$ and (photon) wavelength $\lambda$, represent the excess probability of receiving a photon of rest-wavelength $\lambda$ from a spatial location that is a distance $r$ from a galaxy.
+\CH{I think important to specify excess wrt what? can probably wait for main text}
 When seen as functions of separation, these are like traditional cross-correlation functions.
 When seen as functions of rest wavelength, these are like average spectra, which can be delivered in specific-intensity or photon phase-space density units (see \boxref{box:intensity}).
 
@@ -132,7 +148,7 @@ This proposal is to learn, do, publish, and release a set of novel things:
     We will publish these results in a refereed paper.
     \item Finally, and more speculatively, in Work Package 5 (WP5), we will interpret the galaxy--photon cross-correlation function in terms of new physics, in which there are dark-matter--photon interactions.
     These could be from light (low-energy) transitions, dark-photon--photon mixing, or axion--photon interactions.
-    Some of these will make narrow-line signals, some broad-band, and some would be proportional to the square of the dark-matter density and some to the dark-matter density; interpretation here requires assuming that the dark-matter density follows something close to the form expected from the predictions of the standard cold-dark-matter model \cite{lcdm}.
+    Some of these will make narrow-line signals, some broad-band, and some would be proportional to the square of the dark-matter density and some to the dark-matter density; interpretation here requires assuming that the dark-matter density follows something close to the form expected from the predictions of the standard cold-dark-matter model \citep{lcdm}.
     We will publish these results in a refereed paper, and much more if (as is unlikely) we find something.
 \end{itemize}
 We now speak to each of these work packages in turn.
@@ -156,6 +172,18 @@ HOGG get specific here.
 
 CONNOR: Can you list the advantages of the column-oriented format and our choices here?
 
+Reading a contiguous chunk of memory is far faster than seeking through memory to extract many small non-contiguous bytes.
+So, a database query on, say, wavelength can be sped up enormously by ensuring that the wavelengths are stored contiguously in memory.
+This is what a column-oriented data format enables, by storing each column of a tabular dataset as a single contiguous block of memory.
+The speed of simple filters on a column can be improved still by choosing a suitable ordering of the entries.
+For example, sorting by a column keeps ranges of values of that column contiguous in memory;
+for balancing the speed of queries of multiple columns, the entries are often ordered by space-filling curves such as the Z-order curve \citep{Morton1966-Zcurve} or the Hilbert curve \citep{Lawder&King2001-Hilbert}.
+Additionally, the data can be partitioned into separate files according to the values of some column(s), which can be used to enable a hierarchical query pattern.
+By using a column-oriented format combined with smart choices of the ordering and partitioning, we can minimize the amount of data that needs to be scanned for many common queries.
+% We expect to partition on both a coarse pixelization of sky position and of wavelengths, minimizing the number of files needing to opened for many common queries.
+\CH{I can go into more detail about Parquet or DuckDB --- currently excluding because that feels too much like an implementation detail}
+
+
 \section*{WP2: Causal separation of components}\label{sec:causal}
 The \textsl{SPHEREx} cameras measure specific intensity (see \boxref{box:intensity}).
 The measurements are made through narrow-band filters that vary with location in the focal plane, and hence vary with location on the celestial sphere at each specific spacecraft pointing.
@@ -168,7 +196,7 @@ That is, these ``proximal'' contributions to intensity are time-dependent, in pa
 The intensity fields that make up the core science goals of this proposal are not time-variable (or not on human time-scales).
 Some stars and quasars are time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
 
-Because the ``local'' contributions to the intensity (local to the spacecraft or local to the Solar System) have functional dependences on spacecraft position and velocity vectors (and the same for the relevant Solar System bodies), while the non-local contributions (those effectively fixed on the celestial sphere) do not, it is possible to perform a component separation in much the way that we perform self-calibrations of hardware \cite{selfcalibration}:
+Because the ``local'' contributions to the intensity (local to the spacecraft or local to the Solar System) have functional dependences on spacecraft position and velocity vectors (and the same for the relevant Solar System bodies), while the non-local contributions (those effectively fixed on the celestial sphere) do not, it is possible to perform a component separation in much the way that we perform self-calibrations of hardware \citep{selfcalibration}:
 We provide very flexible (highly parameterized or non-parametric) models for the local contributions that respects the geometric or time-dependent expectations of those fields, and simultaneously fit those models plus the intensity fixed on the celestial sphere.
 This will result in a component separation, and a celestial map that is cleaned of all local contributions.
 
@@ -199,7 +227,7 @@ That will be important for what follows.
 \end{description}
 There could be additional components; if we find that we need them, we will add them.
 
-There is work in machine learning that shows that it is both possible and effective to learn flexible models with geometric structure of these types using \emph{invariant scalars} \cite{scalars}.
+There is work in machine learning that shows that it is both possible and effective to learn flexible models with geometric structure of these types using \emph{invariant scalars} \citep{scalars}.
 These scalars are (effectively) dot products of the vectors that are in play.
 Models based on invariant scalars, by construction, are coordinate free---that is, they obey the O(3) (rotation and reflection) and translation symmetries that are obeyed by essentially all of classical physics.
 We plan to take this approach, and have some prototype code that appears to work well on artificial data.
@@ -215,23 +243,87 @@ Our job here is to clean the \textsl{SPHEREx} data for use in the cosmological p
 The deliverables from WP2 will be a scientific paper in the refereed literature, open-source code, and local-model columns in the column-oriented, SQL-interfaced, public-facing database delivered in WP1.
 
 \section*{WP3: The galaxy--photon cross-correlation function}\label{sec:ccf}
-\begin{explainer}[A note on the marked cross-correlation function]\label{box:ccf}
-    foo and bar.
+\begin{explainer}[The marked cross-correlation function]\label{box:ccf}
+    Consider two samples of 3D points.
+    The cross-correlation of these samples can be defined
+    $$ 1 + \xi(r) = \frac{\sum_{i, j} \mathbbm{1}( |\vec{x}_i - \vec{y}_j| = r ) }{\overline{\rho}_1 \, \overline{\rho}_2} $$
+    where $\vec{x}_i, \vec{y}_j$ are the points from sample 1 or 2 respectively, $\overline{\rho}_1 \, \overline{\rho}_2$ is the expected number of 1--2 pairs at separation $r$ if the two samples were uniformly distributed over the volume, and $\mathbbm{1}(\text{cond})$ is 1 if $\text{cond}$ is true, else 0.
+    Now suppose the points in these samples correspond to the locations of measurements of some fields, $m_1 (\vec{x})$ and $m_2 (\vec{y})$.
+    We can \textit{mark} the points by the measurements to produce the marked cross-correlation function \citep{Rutherford+2021}
+    $$ M(r) = \frac{\sum_{i, j} m_1(\vec{x}_i) \, m_2(\vec{y}_j) \, \mathbbm{1}( |\vec{x}_i - \vec{y}_j| = r ) }{ \overline{m}_1 \, \overline{m}_2 \, \sum_{i, j} \mathbbm{1}( |\vec{x}_i - \vec{y}_j| = r ) } ~, $$
+    where $\overline{m}_{\{ 1, 2 \}}$ are the average values of the marks.
+    Note that the denominator is \textit{not} $\overline{m}_1 \, \overline{m}_2 \, \overline{\rho}_1 \, \overline{\rho}_2$, which we might have been tempted to write by analogy with $\xi(r)$.
+    Such an estimator can be computed, but it would be sensitive both to correlations in the values of the fields $m_{\{1,2\}}$ as well as the locations of the measurements $\{ \vec{x}_i, \vec{y}_j \}$.
+    By using the real pair count in the denominator, $M$ measures only correlations in the values of the fields.
+    In this language, the galaxy--photon cross-correlation function $J(r)$ is defined such that $1 + J(r) = M(r)$, with sample 1 the galaxy catalog and sample 2 the SPHEREx data, $m_1 (\vec{x}) = 1 \ \forall \ \vec{x}$, $m_2 (\vec{y}) = I_\nu (\vec{y})$, and $\vec{x}_i, \vec{y}_j$ computed from on-sky positions using the redshift of galaxy $i$.
 \end{explainer}
+The galaxy correlation function (what we call the galaxy--galaxy auto-correlation function) has been a workhorse in contemporary cosmology \cite{acf}.
+It measures the amplitude of large-scale structure as a function of separation;
+it is sensitive to the cosmological parameters;
+and it is predictable with cosmological simulations.
+When there are two spatially overlapping galaxy samples, it is possible to compute not just the auto-correlation functions but the cross-correlation function between the two samples (See \boxref{box:ccf}).
+At the same time, there have been very important cosmological mesurements made with galaxy surveys by \emph{stacking} imaging properties.
+For example, the average tangential ellipticity of background galaxies as a function of transverse separation from foreground galaxies constrains the gravitational-lensing masses of the foreground galaxy halos \cite{galgal}.
+There is a certain sense in which the measurement of the correlation function can be seen as a kind of ``stacking'' analysis, which is the basis of WP2.
+
+In WP2, we propose to measure---for the first time in galaxy rest-frame proper coordinates---the two-dimensional projected galaxy--photon cross-correlation function.
+Because galaxies are clustered, and because galaxies emit photons, the positive auto- and cross-correlation functions among and between galaxy populations imply that there must be positive cross-correlation functions between galaxies and photons.
+Two-dimensional cross-correlation functions are functions of transverse separation $r$ (which can be proper or comoving; we will focus here on proper);
+in the galaxy--photon case, the cross-correlation function will be a function of both transverse separation $r$ and rest-frame photon wavelength $\lambda$.
+
+Standard estimators for the galaxy--galaxy cross-correlation function look like the following:
+\begin{align}
+  blah blah
+\end{align}
+where HOGG.
+The first form \eqref{eq:landy} has certain optimal properties in the low-clustering limit \cite{landy}.
+The second form \eqref{eq:twoterm} is preferred when only one of the two samples has a known window function (or, equivalently, random catalog).
+Since we will be in this latter case in this project, we will use this kind of form in what follows.
+A comment of relevance for what follows is that the first term $D_1\,D_2$ in \eqref{eq:twoterm} looks like a stacking or co-add of galaxy counts of sample-2 objects near sample-1 objects, and the second term $-R_1\,R_2$ looks like a ``background subtraction'' of the random expectation.
+
+The first form \eqref{eq:landy} has certain optimal properties in the low-clustering limit \cite{landy}.
+The second form \eqref{eq:twoterm} is preferred when only one of the two samples has a known window function (or, equivalently, random catalog).
+Since we will be in this latter case in this project, we will use this kind of form in what follows.
+A comment of relevance for what follows is that the first term $D_1\,D_2$ in \eqref{eq:twoterm} looks like a stacking or co-add of galaxy counts of sample-2 objects near sample-1 objects, and the second term $-R_1\,R_2$ looks like a ``background subtraction'' of the random expectation.
+
+The estimator we will use for the galaxy--photon cross-correlation function is
+\begin{align}
+  blah
+\end{align}
+where HOGG.
+This is	an estimator for the \emph{marked correlation function}	(see \boxref{box:ccf}),	where the ``mark'' is the spectrum, shifted to the relevant rest frame for the galaxy.
+Note how the estimator looks like an average spectrum minus a background expectation for that average spectrum.
+
+HOGG: DO WE need to explain why or how this will work, with every \textsl{SPHEREx} pixel used multiple times at different redshifts? Why and how does that work??
+
+HOGG: Explain how this can be interpreted in terms of intensity fields.
+
+HOGG: Deliverables of this WP.
 
 \section*{WP4: New measurements of cosmic densities}
 
+
 \section*{WP5: New searches for new physics}
-\begin{explainer}[A note on light degrees of freedom in the dark sector]
-    foo and bar.
+\begin{explainer}[Light degrees of freedom in the dark sector]
+    There is an enormous literature on dark-matter models, and possible interactions between dark matter and standard-model particles \cite{dmreview}.
+    If the dark-matter is either very light (for example in axion-like models), or else involves or includes multiple states or particles, interactions with visible or infrared photons can naturally arise \cite{lightdegrees}.
+    For example, CONNOR GIVE AN EXAMPLE HERE??
+    In some cases light degrees of freedom will lead to photon absorption by dark matter; in other cases emission.
+    It can also produce dark-matter--photon scattering.
+    In some cases the interactions will produce a photon line, at a specific photon wavelength $\lambda$.
+    In other cases the interactions will produce broad-band emission.
 \end{explainer}
 
 \section*{Management and timeline}
 
+\clearpage
 \section*{Prior NASA support}
 
 \section*{Student mentoring plan}
 
 \section*{Data management plan}
+
+\clearpage
+\bibliography{main}
 
 \end{document}

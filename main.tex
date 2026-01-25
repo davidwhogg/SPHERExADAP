@@ -1,6 +1,5 @@
 % to-do
 % -----
-% - make up work-package names and work with those throughout.
 % - write it.
 % - get SPO approval and submit it.
 
@@ -51,6 +50,7 @@
 \newcommand{\CH}[1]{{\color{blue!70!black} /CH says: #1/}}
 
 % bibliography
+\usepackage{aas_macros}
 \usepackage{natbib}
 \bibliographystyle{aasjournal}
 
@@ -62,21 +62,18 @@
 
 \paragraph{Project summary:}
 The new \textsl{SPHEREx} Mission is making measurements of a kind that astrophysicists have not had previously.
-The spacecraft delivers a low-resolution visible-to-infrared spectrum of every position on the celestial sphere, with $6\,\arcsec$ pixels.
+The spacecraft delivers a low-resolution visible-to-infrared spectrum of every position on the celestial sphere, with $6$-$\arcsec$ pixels.
 It produces this remarkable data set with no moving parts, making use of multiple detectors, all with ramped, narrowband filters.
-The observing strategy is a calibrator's dream, as it moves, over time, every source on the sky onto every point in the detector space multiple times throughout a two-year mission, (impressively) making the data public as it goes.
+The observing strategy is a calibrator's dream, as it moves, over time, every source on the sky onto many different points in the detector space multiple times throughout a two-year mission, and (impressively) making the data public as it goes.
 
-Here we propose to execute five work packages (WPs) with the \textsl{SPHEREx} data:
+Here we propose to execute four work packages (WPs) with the \textsl{SPHEREx} data:
 
 \paragraph{WP1: Reformat the data} into a publicly available, high-performance, column-oriented data format with an interface that permits very fast queries as a function of time, wavelength, detector position, or position on the celestial sphere.
 
-\paragraph{WP2: Separate components} of the measured intensities using a geometry-informed causal separation technique.
-This will improve the separation of the measured intensity field into contributions at the spacecraft, contributions from Zodiacal light, and contributions from outside the Solar System.
-
-\paragraph{WP3: Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
+\paragraph{WP2: Develop and measure new cosmological observables} that correspond to marked cross-correlation functions between the intensity field and galaxies, in real space. These can be seen as very sensitive, differential ``stacking'' methods.
 They deliver mean intensity fields in the physical vicinities of the galaxies, in the galaxy rest frames, as a function of proper (or any other kind of) radius.
 
-\paragraph{WP4, WP5: Interpret these observables} in terms of both traditional astrophysical signals (WP4) and new physics signals (WP5) from dark-matter--photon interactions.
+\paragraph{WP3, WP4: Interpret these observables} in terms of both traditional astrophysical signals (WP3) and new physics signals (WP4) from dark-matter--photon interactions.
 This will create novel measurements of total (clustered) cosmic stellar mass and star-formation rate
 It will also put sensitive and novel limits on new physics in the dark sector, in the form of dark-matter--photon interactions, which could come from scattering or interactions with light degrees of freedom.
 
@@ -111,42 +108,59 @@ Here we are going to do something novel---something hybrid---that uses every (un
 It turns out that it is possible to make these functions at rest-frame wavelengths and in proper (or comoving) radius units, such that they can be interpreted in terms of either traditional cosmological density fields, or used for searches for new physics.
 In what follows, we will propose to do all of these things, along with all the steps needed to go from the raw \textsl{SPHEREx} data to the measurements and interpretations.
 
-As a reminder (but there will be more in \boxref{box:ccf}), the standard auto-correlation function at separation $r$ is the excesss probability of finding a galaxy at a separation $r$ from another galaxy.
+As a reminder (but there will be more in \boxref{box:ccf}), the standard auto-correlation function at separation $r$ is the excess probability of finding a galaxy at a separation $r$ from another galaxy.
 The cross-correlation function between population A and population B is the excess probability of finding a population-B galaxy at a separation $r$ from a population-A galaxy.
 The galaxy--photon cross-correlation functions we will build in this proposal, which will be functions of both separation $r$ and (photon) wavelength $\lambda$, represent the excess probability of receiving a photon of rest-wavelength $\lambda$ from a spatial location that is a distance $r$ from a galaxy.
-\CH{I think important to specify excess wrt what? can probably wait for main text}
 When seen as functions of separation, these are like traditional cross-correlation functions.
 When seen as functions of rest wavelength, these are like average spectra, which can be delivered in specific-intensity or photon phase-space density units (see \boxref{box:intensity}).
 
 \paragraph{Prior work:}
 We are not the first to think about galaxy--photon cross-correlations, but we are the first to think about them in (proper or comoving) distance space (as opposed to angular space), and we are the first (we believe) to think about them in terms of astrophysically interpretable mean spectra.
 
-CONNOR CAN you put in a summary of the prior research here.
-\begin{itemize}
-    \item Something about doing this in c-ell space; why angular doesn't work for our goals.
-    \item Something about dust correlations by Fukugita and Bovy. And how were they interpreted?
-    \item Something about marked correlation functions and their applications in this area. We will also have a box / explainer below (\boxref{box:ccf}).
-\end{itemize}
+% CONNOR CAN you put in a summary of the prior research here.
+% \begin{itemize}
+%     \item Something about doing this in c-ell space; why angular doesn't work for our goals.
+%     \item Something about dust correlations by Fukugita and Bovy. And how were they interpreted?
+%     \item Something about marked correlation functions and their applications in this area. We will also have a box / explainer below (\boxref{box:ccf}).
+% \end{itemize}
+
+The vast majority of galaxy--intensity cross-correlation analyses have been performed in Fourier space, producing a measurement of the cross power spectrum. \CH{todo: citations}
+This enables a more direct connection to theory, particularly at large scales, and may have better computational scaling than a real-space cross-correlation.
+However, foreground and source masking are important to these analyses, but result in mode mixing and reduced sensitivity that can be difficult to deal with \citep{Cheng&Chang2022}.
+Also, angular structure in the survey strategies, especially if the two survey strategies have correlations, can create additional mode mixing \citep{Dunne+2025}.
+Masking and survey structure are far simpler to understand in real-space.
+Further, at small and nonlinear scales, the real-space cross-correlation function can be easier to interpret directly in terms of physical sources, like satellite galaxies or intrahalo light.
+
+We note two particular works that share considerable overlap with our proposed work.
+\citet{Cheng+2021} uses galaxy stacking of images from CIBER (Cosmic Infrared Background Experiment) to determine the average brightness profile as a function of angular separation from the galaxy in two near-infrared bands (1.1 and 1.8 µm).
+The method of this approach is very similar to what we will employ;
+however, \textsl{SPHEREx} enables calculating a full spectrum, we will interpret these data in terms of a physical radius $r$, and we will interpret these measurements as a cross-correlation.
+\citet{Cheng&Chang2022} forecasts the galaxy--\textsl{SPHEREx} cross-correlation.
+However, they focus on the product of the cross power spectrum and a clustering bias term at large scales.
+We will provide the first \textit{measurement} of such a cross-correlation, and, by focusing on real-space stacking, we will be able to investigate nonlinear scales and decouple the cross-correlation from clustering bias.
+
+We are also not the first to think about interpreting the cross-correlation between galaxies and extragalactic background light in terms of dark matter decay \citep{Gong+2016axionsEBL}.
+In fact, forecasts for decaying dark matter have been produced for \textsl{SPHEREx} specifically \citep{Shirasaki2021,Wu&Xia2025}.
+We will be the first to carry out such a measurement,]
+and performing this measurement in real-space will enable \CH{todo ?}
+
 
 \paragraph{Our contributions:}
 This proposal is to learn, do, publish, and release a set of novel things:
 \begin{itemize}
     \item In Work Package 1 (WP1), we will repackage the \textsl{SPHEREx} data into a high-performance, column-oriented format, and provide an interface for making fast queries of the data, no matter whether those queries are in terms of sky position, wavelength bandpass, focal-plane position, or spacecraft position and velocity vectors, or combinations of those.
-    We will produce this interface, and use it in WP2 and WP3.
+    We will produce this interface, and use it in WP2.
     We will also document it and expose it to the world, to amplify and improve the \textsl{SPHEREx} public data releases.
-    \item In Work Package 2 (WP2), we will improve the \textsl{SPHEREx} component separation using geometric principles and a machine-learning approach that has good causal structure.
-    This will deliver separated local-spacecraft (scattered light and residual atmospheric effects), Solar-system (Zodiacal light), and distant (Galactic and extragalactic) components to the specific intensity in each \textsl{SPHEREx} pixel measurement.
-    We will publish these components in the same interface as that produced in WP1, and in refereed publications.
-    \item In Work Package 3 (WP3), we will measure the galaxy--photon cross-correlation function, as a function of proper and comoving separation and also rest wavelength.
-    These measurements will make use of the component-separated \textsl{SPHEREx} specific intensity measurements delivered in WP2, and several large-solid-angle publicly available spectroscopic galaxy catalogs.
+    \item In Work Package 2 (WP2), we will measure the galaxy--photon cross-correlation function, as a function of proper and comoving separation and also rest wavelength.
+    These measurements will make use of the calibrated \textsl{SPHEREx} specific intensity measurements, and several large-solid-angle publicly available spectroscopic galaxy catalogs.
     We will deliver these results, along with methods and code, in refereed publications and in a public data release.
-    \item In Work Package 4 (WP4), we will interpret the galaxy--photon cross-correlation function in terms of cosmological density fields.
+    \item In Work Package 3 (WP3), we will interpret the galaxy--photon cross-correlation function in terms of cosmological density fields.
     In particular, beacause the cross-correlation can be interpreted as a kind of ``average spectrum,'' it can be interpreted as measuring the mean projected 2-dimensional stellar mass density as a function of transverse separation.
     This, in turn, provided the number density of the galaxy tracers, can be interpreted in terms of the total mean (clustered) stellar mass density.
     In conventional cosmological models, this is very close to the total stellar mass density.
     Similarly, we will interpret the galaxy--photon cross-correlation function in terms of star-formation-rate density.
     We will publish these results in a refereed paper.
-    \item Finally, and more speculatively, in Work Package 5 (WP5), we will interpret the galaxy--photon cross-correlation function in terms of new physics, in which there are dark-matter--photon interactions.
+    \item Finally, and more speculatively, in Work Package 4 (WP4), we will interpret the galaxy--photon cross-correlation function in terms of new physics, in which there are dark-matter--photon interactions.
     These could be from light (low-energy) transitions, dark-photon--photon mixing, or axion--photon interactions.
     Some of these will make narrow-line signals, some broad-band, and some would be proportional to the square of the dark-matter density and some to the dark-matter density; interpretation here requires assuming that the dark-matter density follows something close to the form expected from the predictions of the standard cold-dark-matter model \citep{lcdm}.
     We will publish these results in a refereed paper, and much more if (as is unlikely) we find something.
@@ -170,7 +184,7 @@ Thus we will expose our reformatting of the data and SQL interface to the commun
 
 HOGG get specific here.
 
-CONNOR: Can you list the advantages of the column-oriented format and our choices here?
+% CONNOR: Can you list the advantages of the column-oriented format and our choices here?
 
 Reading a contiguous chunk of memory is far faster than seeking through memory to extract many small non-contiguous bytes.
 So, a database query on, say, wavelength can be sped up enormously by ensuring that the wavelengths are stored contiguously in memory.
@@ -183,66 +197,7 @@ By using a column-oriented format combined with smart choices of the ordering an
 % We expect to partition on both a coarse pixelization of sky position and of wavelengths, minimizing the number of files needing to opened for many common queries.
 \CH{I can go into more detail about Parquet or DuckDB --- currently excluding because that feels too much like an implementation detail}
 
-
-\section*{WP2: Causal separation of components}\label{sec:causal}
-The \textsl{SPHEREx} cameras measure specific intensity (see \boxref{box:intensity}).
-The measurements are made through narrow-band filters that vary with location in the focal plane, and hence vary with location on the celestial sphere at each specific spacecraft pointing.
-There are many source contributions to the intensity field that is being measured: galaxies, quasars, stars, interstellar medium, Zodiacal light (Zodi), scattered light, and glow from the Earth's residual atmosphere.
-It is critical for many projects that we be able to separate these sources of intensity or else model multiple sources simultaneously.
-
-Of these contributions to the intensity, a few---namely the Zodiacal light, scattered light, and glow from the Earth's residual atmosphere---can be separated out using causal techniques.
-The reason is that these intensity sources are not fixed on the Celestial sphere, but depend in addition on the position, velocity, and pointing of the spacecraft with respect to the Earth, Moon, Sun, and Jupiter (and possibly other Solar System objects).
-That is, these ``proximal'' contributions to intensity are time-dependent, in particular simple ways.
-The intensity fields that make up the core science goals of this proposal are not time-variable (or not on human time-scales).
-Some stars and quasars are time-variable, but not in ways that will affect our key scientific measurements or goals (see \secref{sec:ccf}).
-
-Because the ``local'' contributions to the intensity (local to the spacecraft or local to the Solar System) have functional dependences on spacecraft position and velocity vectors (and the same for the relevant Solar System bodies), while the non-local contributions (those effectively fixed on the celestial sphere) do not, it is possible to perform a component separation in much the way that we perform self-calibrations of hardware \citep{selfcalibration}:
-We provide very flexible (highly parameterized or non-parametric) models for the local contributions that respects the geometric or time-dependent expectations of those fields, and simultaneously fit those models plus the intensity fixed on the celestial sphere.
-This will result in a component separation, and a celestial map that is cleaned of all local contributions.
-
-In detail, we propose to build the local component model out of the following additive components.
-Each of them depends on a set of vectors (positions and velocities and pointing directions).
-That will be important for what follows.
-\begin{description}
-    \item[scattered light]
-    The spacecraft focal plane receives some scattered light from Solar System objects, but primarily the Moon.
-    This scattered light is subtracted out by the \textsl{SPHEREx} pipelines, so the model we are building here is to model the residual scattered light unmodeled or modeled incorrectly by the pipeline.
-    The scattered light depends primarily on the relative position of the spacecraft and the Moon, the positions of these relative to the Sun, and the spacecraft pointing direction within that spacecraft--Moon--Sun triangle.
-    Because this depends on spacecraft details, it also depends on the roll angle of the spacecraft around its pointing direction.
-    \item[atmospheric glow]
-    HOGG: IS THIS A THING?
-    \item[symmetric Zodi]
-    The Zodi is a disk of reflecting (in the visible) and emitting (in the infrared) Solar System dust component.
-    To first order, it is a disk centered on the Solar System barycenter and aligned with (normal to) the Solar System angular-momentum pseudo-vector.
-    Thus the intensity received in the \textsl{SPHEREx} focal plane from this first-order component depends only on the barycentric position of the spacecraft, and the pointing of the spacecraft with respect to that vector and the angular-momentum pseudo-vector direction.
-    Because the angular momentum is a pseudo-vector (it depends on the right-hand rule), the dependence on this vector must be even (symmetric with respect to reflections of this direction).
-    \item[Earth-trailing Zodi]
-    There is a second-order component of the Zodi that is locked to the Earth.
-    It is not a big component, but it is important to \textsl{SPHEREx} because the spacecraft is very close to the Earth.
-    This component depends on the relative positions of the Earth and spacecraft, the Earth velocity direction, and the pointing direction of the spacecraft with respect to these these vectors.
-    \item[Jupiter-locked Zodi]
-    It's not fully known what features in the Zodi are locked to other planets, and how important they are.
-    We believe that Jupiter matters,
-    So there will be a component like the Earth-trailing component, but which makes use of Jupiter's position instead of the Earth's.
-\end{description}
-There could be additional components; if we find that we need them, we will add them.
-
-There is work in machine learning that shows that it is both possible and effective to learn flexible models with geometric structure of these types using \emph{invariant scalars} \citep{scalars}.
-These scalars are (effectively) dot products of the vectors that are in play.
-Models based on invariant scalars, by construction, are coordinate free---that is, they obey the O(3) (rotation and reflection) and translation symmetries that are obeyed by essentially all of classical physics.
-We plan to take this approach, and have some prototype code that appears to work well on artificial data.
-The invariant-scalars approach is a feature-engineering move; it does not specify architecture and all machine-learning architectures are permitted.
-We will build models with polynomial (yes, we believe this might work) and multi-layer perceptron structures, and use cross-validation to make choices.
-
-Importantly, in this approach, we are not building a \emph{physical model} of the scattered light, glow, or Zodiacal light.
-These will be \emph{effective models}, designed to make good predictions in the space of the data (which are solely intensities measured in \textsl{SPHEREx} pixels).
-It is possible that the models we build will be interpretable, after the fact, in terms of the physics of the Zodi or the Earth's outer atmosphere.
-However, such interpretation is out of scope for this proposal.
-Our job here is to clean the \textsl{SPHEREx} data for use in the cosmological projects (WP3, WP4, WP5).
-
-The deliverables from WP2 will be a scientific paper in the refereed literature, open-source code, and local-model columns in the column-oriented, SQL-interfaced, public-facing database delivered in WP1.
-
-\section*{WP3: The galaxy--photon cross-correlation function}\label{sec:ccf}
+\section*{WP2: The galaxy--photon cross-correlation function}\label{sec:ccf}
 \begin{explainer}[The marked cross-correlation function]\label{box:ccf}
     Consider two samples of 3D points.
     The cross-correlation of these samples can be defined
@@ -262,7 +217,7 @@ It measures the amplitude of large-scale structure as a function of separation;
 it is sensitive to the cosmological parameters;
 and it is predictable with cosmological simulations.
 When there are two spatially overlapping galaxy samples, it is possible to compute not just the auto-correlation functions but the cross-correlation function between the two samples (See \boxref{box:ccf}).
-At the same time, there have been very important cosmological mesurements made with galaxy surveys by \emph{stacking} imaging properties.
+At the same time, there have been very important cosmological measurements made with galaxy surveys by \emph{stacking} imaging properties.
 For example, the average tangential ellipticity of background galaxies as a function of transverse separation from foreground galaxies constrains the gravitational-lensing masses of the foreground galaxy halos \cite{galgal}.
 There is a certain sense in which the measurement of the correlation function can be seen as a kind of ``stacking'' analysis, which is the basis of WP2.
 
@@ -273,7 +228,20 @@ in the galaxy--photon case, the cross-correlation function will be a function of
 
 Standard estimators for the galaxy--galaxy cross-correlation function look like the following:
 \begin{align}
-  blah blah
+  \hat{\xi}_{1} (r) &= \frac{
+    D_1 \, D_2 (r)
+    - D_1 \, R_2 (r)
+    - R_1 \, D_2 (r)
+    + R_1 \, R_2 (r)
+  }{
+    R_1 \, R_2 (r)
+  } \label{eq:landy} \\
+  \hat{\xi}_{2} (r) &= \frac{
+    D_1 \, D_2 (r)
+    - D_1 \, R_2 (r)
+  }{
+    D_1 \, R_2 (r)
+  } \label{eq:twoterm}
 \end{align}
 where HOGG.
 The first form \eqref{eq:landy} has certain optimal properties in the low-clustering limit \cite{landy}.
@@ -288,7 +256,8 @@ A comment of relevance for what follows is that the first term $D_1\,D_2$ in \eq
 
 The estimator we will use for the galaxy--photon cross-correlation function is
 \begin{align}
-  blah
+  1 + J(r; \lambda, z) &= \frac{D_{\mathcal{G}_z} \, W_{\mathcal{S}_\lambda} (r)}{D_{\mathcal{G}_z} \, D_{\mathcal{S}_\lambda} (r)}
+  \label{eq:ccf}
 \end{align}
 where HOGG.
 This is	an estimator for the \emph{marked correlation function}	(see \boxref{box:ccf}),	where the ``mark'' is the spectrum, shifted to the relevant rest frame for the galaxy.
@@ -300,10 +269,11 @@ HOGG: Explain how this can be interpreted in terms of intensity fields.
 
 HOGG: Deliverables of this WP.
 
-\section*{WP4: New measurements of cosmic densities}
+\CH{reminder to emphasize possibility of being less sensitive to window functions!}
 
+\section*{WP3: New measurements of cosmic densities}
 
-\section*{WP5: New searches for new physics}
+\section*{WP4: New searches for new physics}
 \begin{explainer}[Light degrees of freedom in the dark sector]
     There is an enormous literature on dark-matter models, and possible interactions between dark matter and standard-model particles \cite{dmreview}.
     If the dark-matter is either very light (for example in axion-like models), or else involves or includes multiple states or particles, interactions with visible or infrared photons can naturally arise \cite{lightdegrees}.
